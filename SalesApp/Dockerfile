@@ -1,24 +1,18 @@
-# Use Maven with Java 21 to build the project
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+# Use Maven with Java 17 to build the project
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 # Set the working directory
 WORKDIR /app
 
 # Copy project files
-COPY /SalesApp/pom.xml .
-COPY /SalesApp/src src
-#COPY /scorelens/uploads uploads
-#COPY "ArialUnicodeMSBold.ttf" /app/
+COPY pom.xml .
+COPY src src
 
 # Build the application without running tests
 RUN mvn clean package -DskipTests
 
-# Optional: Check contents
-RUN ls -l /app
-RUN ls -l /app/target
-
-# Use a lightweight JDK 21 runtime image
-FROM eclipse-temurin:21-jdk-jammy
+# Use a lightweight JDK 17 runtime image
+FROM eclipse-temurin:17-jdk-jammy
 
 # Set working directory
 WORKDIR /app

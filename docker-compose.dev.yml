@@ -1,0 +1,31 @@
+# Docker Compose Override for Development
+# This file extends docker-compose.yml for local development
+# Copy this to docker-compose.override.yml to use it
+
+services:
+  sqlserver:
+    ports:
+      - "1433:1433"
+    volumes:
+      # Mount local backup directory
+      - ./backups:/var/opt/mssql/backup
+    environment:
+      - MSSQL_AGENT_ENABLED=true
+      - MSSQL_ENABLE_HADR=0
+
+  app:
+    # Enable debug mode
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGGING_LEVEL_COM_SALESAPP=DEBUG
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+    # Mount source code for hot reload (requires spring-boot-devtools)
+    volumes:
+      - ./SalesApp/src:/app/src:ro
+    # Expose debug port
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    # Override entrypoint for debugging
+    entrypoint: ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-jar", "app.jar"]
