@@ -81,16 +81,20 @@ public class VNPayServiceDev {
             String fieldName = itr.next();
             String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                // Build hash data WITHOUT URL encoding (raw data for signature)
                 hashData.append(fieldName);
                 hashData.append('=');
+                hashData.append(fieldValue);
+                
+                // Build query string WITH URL encoding (for URL)
                 try {
-                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
                     query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString()));
                     query.append('=');
                     query.append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
+                
                 if (itr.hasNext()) {
                     query.append('&');
                     hashData.append('&');

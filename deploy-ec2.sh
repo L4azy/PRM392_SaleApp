@@ -50,10 +50,47 @@ if ! command -v docker &> /dev/null; then
     sudo usermod -aG docker $USER
     rm get-docker.sh
     print_success "Docker installed"
-    print_info "Please log out and log back in, then run this script again"
+    print_error "Docker group membership requires logout. Please run these commands:"
+    echo ""
+    echo "  logout"
+    echo "  # Log back in via SSH"
+    echo "  ./deploy-ec2.sh"
+    echo ""
     exit 0
 else
     print_success "Docker is installed"
+fi
+
+# Check if user is in docker group
+if ! groups | grep -q docker; then
+    print_error "User $USER is not in the docker group"
+    print_info "Adding user to docker group..."
+    sudo usermod -aG docker $USER
+    print_error "Group membership requires logout. Please run these commands:"
+    echo ""
+    echo "  logout"
+    echo "  # Log back in via SSH"
+    echo "  ./deploy-ec2.sh"
+    echo ""
+    exit 0
+else
+    print_success "User is in docker group"
+fi
+
+# Verify Docker daemon is accessible
+if ! docker ps &> /dev/null; then
+    print_error "Cannot access Docker daemon"
+    print_info "This usually means:"
+    echo "  1. You need to log out and log back in after being added to docker group"
+    echo "  2. Docker service is not running"
+    echo ""
+    echo "Try these commands:"
+    echo "  sudo systemctl start docker"
+    echo "  sudo systemctl enable docker"
+    echo "  logout && ssh back in"
+    exit 1
+else
+    print_success "Docker daemon is accessible"
 fi
 
 # Check if Docker Compose is installed

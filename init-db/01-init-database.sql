@@ -141,10 +141,35 @@ BEGIN
     CREATE TABLE ChatMessages (
         ChatMessageID INT PRIMARY KEY IDENTITY(1,1),
         UserID INT,
-        Message NVARCHAR(MAX),
+        ReceiverID INT,
+        Message NVARCHAR(MAX) NOT NULL,
         SentAt DATETIME NOT NULL DEFAULT GETDATE(),
-        FOREIGN KEY (UserID) REFERENCES Users(UserID)
+        FromAI BIT NOT NULL DEFAULT 0,
+        ForwardedToHuman BIT NOT NULL DEFAULT 0,
+        FOREIGN KEY (UserID) REFERENCES Users(UserID),
+        FOREIGN KEY (ReceiverID) REFERENCES Users(UserID)
     );
+END
+GO
+
+-- Add missing columns to existing ChatMessages table if they don't exist
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ChatMessages]') AND type in (N'U'))
+BEGIN
+    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[ChatMessages]') AND name = 'ReceiverID')
+    BEGIN
+        ALTER TABLE ChatMessages ADD ReceiverID INT;
+        ALTER TABLE ChatMessages ADD FOREIGN KEY (ReceiverID) REFERENCES Users(UserID);
+    END
+
+    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[ChatMessages]') AND name = 'FromAI')
+    BEGIN
+        ALTER TABLE ChatMessages ADD FromAI BIT NOT NULL DEFAULT 0;
+    END
+
+    IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[ChatMessages]') AND name = 'ForwardedToHuman')
+    BEGIN
+        ALTER TABLE ChatMessages ADD ForwardedToHuman BIT NOT NULL DEFAULT 0;
+    END
 END
 GO
 
