@@ -60,10 +60,10 @@ public class CustomJwtDecoder implements JwtDecoder {
                         System.out.println("Public endpoint detected, skipping JWT validation for: " + requestPath);
                         // For public endpoints, create a minimal JWT without validation
                         if(Objects.isNull(nimbusJwtDecoder)) {
-                            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
+                            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS256");
                             nimbusJwtDecoder = NimbusJwtDecoder
                                     .withSecretKey(secretKeySpec)
-                                    .macAlgorithm(MacAlgorithm.HS512)
+                                    .macAlgorithm(MacAlgorithm.HS256)
                                     .build();
                         }
                         return nimbusJwtDecoder.decode(token);
@@ -91,10 +91,10 @@ public class CustomJwtDecoder implements JwtDecoder {
         }
 
         if(Objects.isNull(nimbusJwtDecoder)) {
-            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS256");
             nimbusJwtDecoder = NimbusJwtDecoder
                     .withSecretKey(secretKeySpec)
-                    .macAlgorithm(MacAlgorithm.HS512)
+                    .macAlgorithm(MacAlgorithm.HS256)
                     .build();
         }
         
