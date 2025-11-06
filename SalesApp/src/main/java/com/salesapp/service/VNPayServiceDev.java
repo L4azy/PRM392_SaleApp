@@ -72,15 +72,22 @@ public class VNPayServiceDev {
         System.out.println("Timeout Minutes: " + TimeZoneConfig.VNPAY_TIMEOUT_MINUTES);
         System.out.println("===============================");
 
+        // Build parameter lists according to VNPay specification
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames);
+        
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
-        Iterator<String> itr = fieldNames.iterator();
-        while (itr.hasNext()) {
-            String fieldName = itr.next();
+        
+        boolean isFirst = true;
+        for (String fieldName : fieldNames) {
             String fieldValue = vnp_Params.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                if (!isFirst) {
+                    hashData.append('&');
+                    query.append('&');
+                }
+                
                 // Build hash data WITHOUT URL encoding (raw data for signature)
                 hashData.append(fieldName);
                 hashData.append('=');
@@ -95,10 +102,7 @@ public class VNPayServiceDev {
                     e.printStackTrace();
                 }
                 
-                if (itr.hasNext()) {
-                    query.append('&');
-                    hashData.append('&');
-                }
+                isFirst = false;
             }
         }
         String queryUrl = query.toString();
@@ -111,9 +115,20 @@ public class VNPayServiceDev {
         System.out.println("Amount: " + amount);
         System.out.println("Order Info: " + orderInfo);
         System.out.println("Return URL: " + returnUrl);
-        System.out.println("Hash Data (raw): " + hashData.toString());
-        System.out.println("Generated Hash: " + vnp_SecureHash);
-        System.out.println("Payment URL: " + paymentUrl);
+        System.out.println("TMN Code: " + vnp_TmnCode);
+        System.out.println("Hash Secret: " + VNPAYConfig.vnp_HashSecret.substring(0, 8) + "...");
+        System.out.println("--- Parameters (sorted) ---");
+        for (String key : fieldNames) {
+            System.out.println("  " + key + " = " + vnp_Params.get(key));
+        }
+        System.out.println("--- Hash Data (raw) ---");
+        System.out.println(hashData.toString());
+        System.out.println("--- Generated Hash ---");
+        System.out.println(vnp_SecureHash);
+        System.out.println("--- Query String ---");
+        System.out.println(queryUrl);
+        System.out.println("--- Full Payment URL ---");
+        System.out.println(paymentUrl);
         System.out.println("======================");
 
         return paymentUrl;

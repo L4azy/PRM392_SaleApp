@@ -18,17 +18,19 @@ public class VNPAYConfig {
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
-        while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
+        
+        boolean isFirst = true;
+        for (Object fieldNameObj : fieldNames) {
+            String fieldName = (String) fieldNameObj;
             String fieldValue = (String) fields.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                if (!isFirst) {
+                    sb.append("&");
+                }
                 sb.append(fieldName);
                 sb.append("=");
                 sb.append(fieldValue);
-                if (itr.hasNext()) {
-                    sb.append("&");
-                }
+                isFirst = false;
             }
         }
         return hmacSHA512(vnp_HashSecret, sb.toString());
