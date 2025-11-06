@@ -111,6 +111,8 @@ public class VNPayServiceDev {
         System.out.println("Amount: " + amount);
         System.out.println("Order Info: " + orderInfo);
         System.out.println("Return URL: " + returnUrl);
+        System.out.println("Hash Data (raw): " + hashData.toString());
+        System.out.println("Generated Hash: " + vnp_SecureHash);
         System.out.println("Payment URL: " + paymentUrl);
         System.out.println("======================");
 
@@ -141,6 +143,7 @@ public class VNPayServiceDev {
         
         // Debug signature information
         System.out.println("=== SIGNATURE DEBUG ===");
+        System.out.println("Fields for hashing: " + fields);
         System.out.println("VNPay SecureHash: " + vnp_SecureHash);
         System.out.println("Calculated Hash: " + signValue);
         System.out.println("Hash Match: " + signValue.equals(vnp_SecureHash));

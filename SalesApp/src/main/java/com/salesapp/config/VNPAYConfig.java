@@ -26,9 +26,9 @@ public class VNPAYConfig {
                 sb.append(fieldName);
                 sb.append("=");
                 sb.append(fieldValue);
-            }
-            if (itr.hasNext()) {
-                sb.append("&");
+                if (itr.hasNext()) {
+                    sb.append("&");
+                }
             }
         }
         return hmacSHA512(vnp_HashSecret, sb.toString());
