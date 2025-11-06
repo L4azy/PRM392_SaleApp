@@ -10,8 +10,8 @@ import java.util.*;
 public class VNPAYConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String vnp_Returnurl = "/vnpay-payment-return";
-    public static String vnp_TmnCode = "I4CFWC18"; // Thay đổi theo TMN Code của bạn
-    public static String vnp_HashSecret = "A72HI1BP870VL7NBUCBJ9ZKRXMBUN1LX"; // Thay đổi theo Hash Secret của bạn
+    public static String vnp_TmnCode = "L6HT7TRL";
+    public static String vnp_HashSecret = "OF6M0J6RIX8RN9ANH5Z0PKLY3YK6TKGT";
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
     public static String hashAllFields(Map fields) {
