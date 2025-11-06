@@ -10,14 +10,8 @@ import java.util.*;
 public class VNPAYConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String vnp_Returnurl = "/vnpay-payment-return";
-    // VNPay Official Demo Credentials - these are guaranteed to work in sandbox
-    // Replace with your actual credentials after registering at https://sandbox.vnpayment.vn/
-    public static String vnp_TmnCode = System.getenv("VNPAY_TMN_CODE") != null 
-        ? System.getenv("VNPAY_TMN_CODE") 
-        : "DEMOV210";  // VNPay official demo TMN Code
-    public static String vnp_HashSecret = System.getenv("VNPAY_HASH_SECRET") != null 
-        ? System.getenv("VNPAY_HASH_SECRET") 
-        : "LMYUMHROMPVFXBBTWAGSCAKLKFWSUPLT";  // VNPay official demo Hash Secret
+    public static String vnp_TmnCode = "L6HT7TRL";
+    public static String vnp_HashSecret = "OF6M0J6RIX8RN9ANH5Z0PKLY3YK6TKGT";
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
     public static String hashAllFields(Map fields) {
