@@ -32,7 +32,7 @@ public class VNPAYController {
     public ResponseObject<String> createPayment(
             @RequestParam("amount") long totalAmount,
             @RequestParam("orderInfo") String orderInfo,
-            @RequestParam(value = "returnUrl", defaultValue = "http://localhost:3000/payment-result") String returnUrl,
+            @RequestParam(value = "returnUrl", defaultValue = "http://3.27.207.79:3000/payment-result") String returnUrl,
             HttpServletRequest request) {
         
         String vnpayUrl = vnPayService.createOrder(request, totalAmount, orderInfo, returnUrl);
@@ -110,7 +110,7 @@ public class VNPAYController {
     @PostMapping("/create-payment-for-order/{orderId}")
     public ResponseObject<String> createPaymentForOrder(
             @PathVariable int orderId,
-            @RequestParam(value = "returnUrl", defaultValue = "http://localhost:3000/payment-result") String returnUrl,
+            @RequestParam(value = "returnUrl", defaultValue = "http://3.27.207.79:3000/payment-result") String returnUrl,
             HttpServletRequest request) {
 
         // Lấy thông tin order từ database
@@ -244,13 +244,13 @@ public class VNPAYController {
         return ResponseObject.<String>builder()
                 .status(1000)
                 .message("Test callback URL generated")
-                .data("http://localhost:8080" + testUrl)
+                .data("http://3.27.207.79:8080" + testUrl)
                 .build();
     }
 
     @GetMapping("/test-payment-scenarios")
     public ResponseObject<Object> testPaymentScenarios(@RequestParam int orderId) {
-        String baseUrl = "http://localhost:8080";
+        String baseUrl = "http://3.27.207.79:8080";
         long timestamp = System.currentTimeMillis();
 
         // Tạo các scenario test khác nhau
