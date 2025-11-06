@@ -45,7 +45,7 @@ public class VNPayServiceDev {
         String locate = "vn";
         vnp_Params.put("vnp_Locale", locate);
 
-        returnUrl += returnUrl.contains("?") ? "&" : "?";
+        // Don't modify the return URL - use it as-is
         vnp_Params.put("vnp_ReturnUrl", returnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
