@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,26 @@ public class ChatMessageV1Controller {
         return ResponseEntity.ok(forwarded.stream()
                 .map(chatMessageMapper::toResponse)
                 .toList());
+    }
+
+    @GetMapping("/ai/status")
+    public ResponseEntity<Map<String, Object>> getAIStatus() {
+        Map<String, Object> status = new HashMap<>();
+        status.put("aiUserId", 23);
+        status.put("status", "active");
+        status.put("features", List.of(
+            "Product Search",
+            "Shopping Assistant", 
+            "Order Support",
+            "General Queries"
+        ));
+        status.put("timestamp", Instant.now());
+        return ResponseEntity.ok(status);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<com.salesapp.dto.response.CustomerUserResponse>> getCustomerUsers() {
+        return ResponseEntity.ok(chatMessageService.getAllCustomerUsersInChat());
     }
 
 

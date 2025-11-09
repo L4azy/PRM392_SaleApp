@@ -35,6 +35,11 @@ public class ChatMessageService {
     private static final Integer AI_USER_ID = 23;
 
     public ChatMessageResponse sendMessage(ChatMessageRequest request) {
+        // Validate input
+        if (request.getMessage() == null || request.getMessage().trim().isEmpty()) {
+            throw new RuntimeException("Message cannot be empty");
+        }
+
         User sender = userRepository.findById(request.getUserID())
                 .orElseThrow(() -> new RuntimeException("User not found: " + request.getUserID()));
 
@@ -45,7 +50,7 @@ public class ChatMessageService {
         ChatMessage message = new ChatMessage();
         message.setUserID(sender);
         message.setReceiver(receiver);
-        message.setMessage(request.getMessage());
+        message.setMessage(request.getMessage().trim());
         message.setSentAt(Instant.now());
         message.setFromAI(false);
         message.setForwardedToHuman(false);
@@ -54,33 +59,49 @@ public class ChatMessageService {
 
         // 🔁 Nếu gửi tới AI → phản hồi tự động với Smart AI (có khả năng call API)
         if (receiver.getId().equals(AI_USER_ID)) {
-            // Use Smart AI service để get response với real-time API data
-            Gemini aiReply = smartAIService.getSmartResponse(request.getMessage());
+            try {
+                // Use Smart AI service để get response với real-time API data
+                Gemini aiReply = smartAIService.getSmartResponse(request.getMessage());
 
-            ChatMessage aiMessage = new ChatMessage();
-            aiMessage.setUserID(receiver);        // AI gửi
-            aiMessage.setReceiver(sender);        // Gửi lại cho user
-            aiMessage.setMessage(aiReply.getReply());
-            aiMessage.setSentAt(Instant.now());
-            aiMessage.setFromAI(true);
-            aiMessage.setForwardedToHuman(aiReply.isNeedHuman());
+                ChatMessage aiMessage = new ChatMessage();
+                aiMessage.setUserID(receiver);        // AI gửi
+                aiMessage.setReceiver(sender);        // Gửi lại cho user
+                aiMessage.setMessage(aiReply.getReply());
+                aiMessage.setSentAt(Instant.now());
+                aiMessage.setFromAI(true);
+                aiMessage.setForwardedToHuman(aiReply.isNeedHuman());
 
-            ChatMessage savedAiMessage = chatMessageRepository.save(aiMessage);
+                ChatMessage savedAiMessage = chatMessageRepository.save(aiMessage);
 
-            // Gửi lại cho user
-            messagingTemplate.convertAndSendToUser(
-                    String.valueOf(sender.getId()), "/queue/messages", chatMessageMapper.toResponse(savedAiMessage)
-            );
-
-            // 🔁 Nếu cần chuyển tiếp cho admin
-            if (aiReply.isNeedHuman()) {
-                // Gửi thông báo tới Admin (ví dụ user ID = 1)
+                // Gửi lại cho user qua WebSocket
                 messagingTemplate.convertAndSendToUser(
-                        "1", "/queue/admin", chatMessageMapper.toResponse(savedAiMessage)
+                        String.valueOf(sender.getId()), "/queue/messages", chatMessageMapper.toResponse(savedAiMessage)
+                );
+
+                // 🔁 Nếu cần chuyển tiếp cho admin
+                if (aiReply.isNeedHuman()) {
+                    // Gửi thông báo tới Admin (ví dụ user ID = 1)
+                    messagingTemplate.convertAndSendToUser(
+                            "1", "/queue/admin", chatMessageMapper.toResponse(savedAiMessage)
+                    );
+                }
+            } catch (Exception e) {
+                // If AI fails, send error message to user
+                ChatMessage errorMessage = new ChatMessage();
+                errorMessage.setUserID(receiver);
+                errorMessage.setReceiver(sender);
+                errorMessage.setMessage("Xin lỗi, AI Assistant tạm thời không khả dụng. Vui lòng thử lại sau hoặc liên hệ admin để được hỗ trợ.");
+                errorMessage.setSentAt(Instant.now());
+                errorMessage.setFromAI(true);
+                errorMessage.setForwardedToHuman(true);
+
+                ChatMessage savedErrorMessage = chatMessageRepository.save(errorMessage);
+                
+                messagingTemplate.convertAndSendToUser(
+                        String.valueOf(sender.getId()), "/queue/messages", chatMessageMapper.toResponse(savedErrorMessage)
                 );
             }
         }
-
 
         return chatMessageMapper.toResponse(savedMessage);
     }
