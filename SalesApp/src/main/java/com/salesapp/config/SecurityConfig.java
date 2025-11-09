@@ -45,7 +45,9 @@ public class SecurityConfig {
             "/v*/ai/train", "/v*/ai/test", "/v*/ai/api-docs", "/v*/ai/training/**",
             "/v*/ai-training/**",
             // Smart AI endpoints - AI with API calling capability
-            "/v*/smart-ai/**"
+            "/v*/smart-ai/**",
+            // Static resources - HTML, CSS, JS files
+            "/*.html", "/static/**", "/css/**", "/js/**", "/images/**"
     };
 
     @Bean
