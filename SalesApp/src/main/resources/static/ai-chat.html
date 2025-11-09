@@ -276,10 +276,11 @@
         };
 
         function connectWebSocket() {
-            const socket = new SockJS('/ws');
+            const socket = new SockJS('/ws-chat');  // Changed from /ws to /ws-chat
             stompClient = Stomp.over(socket);
             
             stompClient.connect({}, function(frame) {
+                console.log('Connected to WebSocket:', frame);
                 updateConnectionStatus('Connected', true);
                 
                 // Subscribe to user's personal queue
@@ -289,9 +290,19 @@
                     hideTypingIndicator();
                 });
                 
+                // Subscribe to general topic (optional)
+                stompClient.subscribe('/topic/messages', function(message) {
+                    const chatMessage = JSON.parse(message.body);
+                    console.log('Topic message received:', chatMessage);
+                });
+                
             }, function(error) {
+                console.error('WebSocket connection error:', error);
                 updateConnectionStatus('Disconnected', false);
                 showError('Không thể kết nối đến server. Vui lòng thử lại.');
+                
+                // Retry connection after 5 seconds
+                setTimeout(connectWebSocket, 5000);
             });
         }
 

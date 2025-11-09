@@ -49,7 +49,7 @@ public class SecurityConfig {
             // Chat endpoints - Public access for AI chatbot
             "/v*/chat/**", "/chat/**",
             // WebSocket endpoints
-            "/ws/**", "/app/**", "/topic/**",
+            "/ws/**", "/ws-chat/**", "/app/**", "/topic/**", "/queue/**", "/user/**",
             // Static resources - HTML, CSS, JS files
             "/*.html", "/static/**", "/css/**", "/js/**", "/images/**"
     };
