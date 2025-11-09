@@ -46,6 +46,10 @@ public class SecurityConfig {
             "/v*/ai-training/**",
             // Smart AI endpoints - AI with API calling capability
             "/v*/smart-ai/**",
+            // Chat endpoints - Public access for AI chatbot
+            "/v*/chat/**", "/chat/**",
+            // WebSocket endpoints
+            "/ws/**", "/app/**", "/topic/**",
             // Static resources - HTML, CSS, JS files
             "/*.html", "/static/**", "/css/**", "/js/**", "/images/**"
     };
