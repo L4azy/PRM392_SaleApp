@@ -18,9 +18,9 @@ INSERT INTO [dbo].[Users] (
 )
 VALUES (
     23,                                                          -- UserID (must be 23)
-    'ShopMate AI Assistant',                                    -- Username
+    'Skibdi AI Assistant',                                      -- Username
     '$2a$10$1u1atWn1nXM/dvb/2/9LeJjNKTPZZos80Jdy',            -- PasswordHash (dummy - AI doesn't login)
-    'ai-assistant@shopmate.com',                                -- Email
+    'ai-assistant@skibdi.com',                                  -- Email
     'N/A',                                                       -- PhoneNumber
     'Cloud Server',                                              -- Address
     'AI'                                                         -- Role (matches RoleEnum.AI)
